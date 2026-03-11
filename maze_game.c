@@ -73,7 +73,7 @@ int main(void)
     Point imagePoint = { 0 };
 
     // Define player position and size
-    Rectangle player = { mazePosition.x + 1*MAZE_SCALE + 2, mazePosition.y + 1*MAZE_SCALE + 2, 4, 4 };
+    Rectangle player = { mazePosition.x + 1*MAZE_SCALE + 128, mazePosition.y + 1*MAZE_SCALE + 128, 50, 50 };
     float playerSpeed = 200.0f;
     
     Point playerCell = { 1, 1 };

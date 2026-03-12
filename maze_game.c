@@ -120,8 +120,15 @@ int main(void)
     int currentBiome = 2;
 
     // TODO: Define all variables required for game UI elements (sprites, fonts...)
-
-    SetTargetFPS(60);       // Set our game to run at 60 frames-per-second
+    
+    //Image for final scene (when game ends)
+    Image finalImage = LoadImage("resources/Image_Final_Scene.png");
+    ImageResize(&finalImage, screenWidth, screenHeight);
+    Texture textureFinal = LoadTextureFromImage(finalImage);
+    
+    // Set our game to run at 60 frames-per-second
+    SetTargetFPS(60); 
+    
     //--------------------------------------------------------------------------------------
 
     // Main game loop
@@ -332,7 +339,9 @@ int main(void)
             }
             else if (currentMode == 2)
             {
-                
+               DrawTexture(textureFinal, screenWidth/2 - textureFinal.width/2, screenHeight/1.3 - textureFinal.height/1.3, WHITE);
+               DrawRectangle(screenWidth/2 - MeasureText("CONGRATULATIONS", 88)/2 - 15, 0, MeasureText("CONGRATULATIONS", 88) + 30,88, PINK);
+               DrawText("CONGRATULATIONS", screenWidth/2 - MeasureText("CONGRATULATIONS", 88)/2, 0, 88, BLACK);
             }
 
             DrawFPS(10, 10);
@@ -345,6 +354,8 @@ int main(void)
     //--------------------------------------------------------------------------------------
     UnloadTexture(texMaze);     // Unload maze texture from VRAM (GPU)
     UnloadImage(imMaze);        // Unload maze image from RAM (CPU)
+    UnloadTexture(textureFinal);
+    UnloadImage(finalImage);
     
     // TODO: Unload all loaded resources
     for (int i = 0; i < 4; i++) UnloadTexture(texBiomes[i]);

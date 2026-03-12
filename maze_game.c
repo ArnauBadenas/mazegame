@@ -44,9 +44,17 @@ int main(void)
     const int screenHeight = 720;
 
     InitWindow(screenWidth, screenHeight, "Delivery04 - maze game");
+    
+    // Initialize audio device
+    InitAudioDevice();
+    
+    Music backgroundMusic = LoadMusicStream("resources/background_music.ogg");
+    PlayMusicStream(backgroundMusic);
+    
+    Sound itemPickUpSound = LoadSound("resources/item_pick_up.wav");
 
     // Current application mode
-    int currentMode = 1;    // 0-Game, 1-Editor
+    int currentMode = 1;    // 0-Game, 1-Editor, 2-Ending
 
     // Random seed defines the random numbers generation,
     // always the same if using the same seed
@@ -122,6 +130,8 @@ int main(void)
         // Update
         //----------------------------------------------------------------------------------
         // Select current mode as desired
+        UpdateMusicStream(backgroundMusic);
+        
         if (IsKeyPressed(KEY_SPACE)) currentMode = !currentMode; // Toggle mode: 0-Game, 1-Editor
         
         if (IsKeyPressed(KEY_R))
@@ -186,6 +196,7 @@ int main(void)
             else if (camera2d.zoom < 0.1f) camera2d.zoom = 0.1f;
 
             // TODO: [2p] Maze items pickup logic
+            // Usad esto: PlaySound(itemPickUpSound); para que suene cuando se coje un objecto :P
         }
         else if (currentMode == 1) // Editor mode
         {
@@ -335,9 +346,12 @@ int main(void)
     UnloadTexture(texMaze);     // Unload maze texture from VRAM (GPU)
     UnloadImage(imMaze);        // Unload maze image from RAM (CPU)
     
-    for (int i = 0; i < 4; i++) UnloadTexture(texBiomes[i]);
-
     // TODO: Unload all loaded resources
+    for (int i = 0; i < 4; i++) UnloadTexture(texBiomes[i]);
+    UnloadMusicStream(backgroundMusic);
+    UnloadSound(itemPickUpSound);
+    
+    CloseAudioDevice();
     
     CloseWindow();              // Close window and OpenGL context
     //--------------------------------------------------------------------------------------

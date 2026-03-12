@@ -74,11 +74,15 @@ int main(void)
     Point mousePoint = { 0 };
     Point imagePoint = { 0 };
     
-    Point endPoint = { texMaze.width - 2, texMaze.height - 2 };
+    Point endPoint = { GetRandomValue(1, texMaze.width - 2), GetRandomValue(1, texMaze.width - 2) };
+    ImageDrawPixel(&imMaze, endPoint.x, endPoint.y, GREEN);
+    
+    UnloadTexture(texMaze);
+    texMaze = LoadTextureFromImage(imMaze);
 
     // Define player position and size
     Rectangle player = { mazePosition.x + 1*MAZE_SCALE + 128, mazePosition.y + 1*MAZE_SCALE + 128, 50, 50 };
-    float playerSpeed = 250.0f;
+    float playerSpeed = 300.0f;
     
     Point playerCell = { 1, 1 };
     Rectangle playerBounds[4] = { 0 };
@@ -105,7 +109,7 @@ int main(void)
     texBiomes[2] = LoadTexture("resources/maze_atlas03.png");
     texBiomes[3] = LoadTexture("resources/maze_atlas04.png");
     
-    int currentBiome = 3;
+    int currentBiome = 2;
 
     // TODO: Define all variables required for game UI elements (sprites, fonts...)
 
@@ -126,6 +130,10 @@ int main(void)
             SetRandomSeed(seed);
             
             imMaze = GenImageMaze(MAZE_WIDTH, MAZE_HEIGHT, 4, 4, 0.75f);
+            
+            endPoint.x = GetRandomValue(1, texMaze.width - 2);
+            endPoint.y = GetRandomValue(1, texMaze.width - 2);
+            ImageDrawPixel(&imMaze, endPoint.x, endPoint.y, GREEN);
             
             UnloadTexture(texMaze);
             texMaze = LoadTextureFromImage(imMaze);
@@ -295,6 +303,9 @@ int main(void)
                 // TODO: Draw game UI (score, time...) using custom sprites/fonts
                 // NOTE: Game UI does not receive the camera2d transformations,
                 // it is drawn in screen space coordinates directly
+                
+                DrawTextureEx(texMaze, (Vector2) { GetScreenWidth() - texMaze.width * 4.0f - 10, 10 }, 0.0f, 4.0f, WHITE);
+                DrawRectangle(GetScreenWidth() - texMaze.width * 4.0f - 10 + playerCell.x * 4.0f, 10 + playerCell.y * 4.0f, 4, 4, RED);
             }
             else if (currentMode == 1) // Editor mode
             {
@@ -323,6 +334,8 @@ int main(void)
     //--------------------------------------------------------------------------------------
     UnloadTexture(texMaze);     // Unload maze texture from VRAM (GPU)
     UnloadImage(imMaze);        // Unload maze image from RAM (CPU)
+    
+    for (int i = 0; i < 4; i++) UnloadTexture(texBiomes[i]);
 
     // TODO: Unload all loaded resources
     
@@ -382,6 +395,14 @@ static Image GenImageMaze(int width, int height, int spacingRows, int spacingCol
         Point nextMazePoint = mazePoints[indices[i]];        
         nextMazePoint.x += dirIncrementals[dir].x;
         nextMazePoint.y += dirIncrementals[dir].y;
+        
+        while (ColorIsEqual(GetImageColor(imMaze, nextMazePoint.x, nextMazePoint.y), BLACK))
+        {
+            ImageDrawPixel(&imMaze, nextMazePoint.x, nextMazePoint.y, WHITE);
+            
+            nextMazePoint.x += dirIncrementals[dir].x;
+            nextMazePoint.y += dirIncrementals[dir].y;
+        }
     }
     
     UnloadRandomSequence(indices);

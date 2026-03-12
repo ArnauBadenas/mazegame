@@ -15,6 +15,7 @@
 
 #include <stdlib.h>     // Required for: malloc(), free()
 #include <math.h>
+#include <stdio.h>
 
 #define MAZE_WIDTH          64
 #define MAZE_HEIGHT         64
@@ -49,7 +50,8 @@ int main(void)
 
     // Random seed defines the random numbers generation,
     // always the same if using the same seed
-    SetRandomSeed(12349);
+    unsigned int seed = 123456;
+    SetRandomSeed(seed);
 
     // Generate maze image using the grid-based generator
     // TODO: [1p] Implement GenImageMaze() function with required parameters
@@ -71,10 +73,12 @@ int main(void)
     
     Point mousePoint = { 0 };
     Point imagePoint = { 0 };
+    
+    Point endPoint = { texMaze.width - 2, texMaze.height - 2 };
 
     // Define player position and size
     Rectangle player = { mazePosition.x + 1*MAZE_SCALE + 128, mazePosition.y + 1*MAZE_SCALE + 128, 50, 50 };
-    float playerSpeed = 200.0f;
+    float playerSpeed = 250.0f;
     
     Point playerCell = { 1, 1 };
     Rectangle playerBounds[4] = { 0 };
@@ -101,7 +105,7 @@ int main(void)
     texBiomes[2] = LoadTexture("resources/maze_atlas03.png");
     texBiomes[3] = LoadTexture("resources/maze_atlas04.png");
     
-    int currentBiome = 0;
+    int currentBiome = 3;
 
     // TODO: Define all variables required for game UI elements (sprites, fonts...)
 
@@ -115,6 +119,17 @@ int main(void)
         //----------------------------------------------------------------------------------
         // Select current mode as desired
         if (IsKeyPressed(KEY_SPACE)) currentMode = !currentMode; // Toggle mode: 0-Game, 1-Editor
+        
+        if (IsKeyPressed(KEY_R))
+        {
+            seed++;
+            SetRandomSeed(seed);
+            
+            imMaze = GenImageMaze(MAZE_WIDTH, MAZE_HEIGHT, 4, 4, 0.75f);
+            
+            UnloadTexture(texMaze);
+            texMaze = LoadTextureFromImage(imMaze);
+        }
 
         if (currentMode == 0) // Game mode
         {
@@ -125,10 +140,10 @@ int main(void)
 
             Rectangle prevPlayer = player;
             
-            if (IsKeyDown(KEY_UP)) player.y -= (playerSpeed * GetFrameTime());
-            if (IsKeyDown(KEY_DOWN)) player.y += (playerSpeed * GetFrameTime());
-            if (IsKeyDown(KEY_LEFT)) player.x -= (playerSpeed * GetFrameTime());
-            if (IsKeyDown(KEY_RIGHT)) player.x += (playerSpeed * GetFrameTime());
+            if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)) player.y -= (playerSpeed * GetFrameTime());
+            if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S)) player.y += (playerSpeed * GetFrameTime());
+            if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) player.x -= (playerSpeed * GetFrameTime());
+            if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) player.x += (playerSpeed * GetFrameTime());
             
             playerCell.x = (int)((player.x + player.width / 2 - mazePosition.x) / ((float)texBiomes[currentBiome].width * 0.5f));
             playerCell.y = (int)((player.y + player.height / 2 - mazePosition.y) / ((float)texBiomes[currentBiome].height * 0.5f));
@@ -144,6 +159,14 @@ int main(void)
             (CheckCollisionRecs(player, playerBounds[3])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x - 1, playerCell.y), WHITE)))
             {
                 player = prevPlayer;
+            }
+            
+            if ((CheckCollisionRecs(player, playerBounds[0])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x, playerCell.y - 1), GREEN)) ||
+            (CheckCollisionRecs(player, playerBounds[1])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x + 1, playerCell.y), GREEN)) ||
+            (CheckCollisionRecs(player, playerBounds[2])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x, playerCell.y + 1), GREEN)) ||
+            (CheckCollisionRecs(player, playerBounds[3])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x - 1, playerCell.y), GREEN)))
+            {
+                currentMode = 2;
             }
 
             // TODO: [1p] Camera 2D system following player movement around the map
@@ -174,7 +197,19 @@ int main(void)
             
             if ((imagePoint.x >= 0) && (imagePoint.y >= 0) && (imagePoint.x < imMaze.width) && (imagePoint.y < imMaze.height))
             {
-                if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
+                if (IsKeyDown(KEY_LEFT_CONTROL) && IsMouseButtonDown(MOUSE_RIGHT_BUTTON))
+                {
+                    ImageDrawPixel(&imMaze, endPoint.x, endPoint.y, WHITE);
+                    
+                    endPoint.x = imagePoint.x;
+                    endPoint.y = imagePoint.y;
+                    
+                    ImageDrawPixel(&imMaze, endPoint.x, endPoint.y, GREEN);
+                    
+                    UnloadTexture(texMaze);
+                    texMaze = LoadTextureFromImage(imMaze);
+                }
+                else if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
                 {
                     ImageDrawPixel(&imMaze, imagePoint.x, imagePoint.y, WHITE);
                     
@@ -188,17 +223,27 @@ int main(void)
                     UnloadTexture(texMaze);
                     texMaze = LoadTextureFromImage(imMaze);
                 }
+                else if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE))
+                {
+                    ImageDrawPixel(&imMaze, imagePoint.x, imagePoint.y, RED);
+                    
+                    UnloadTexture(texMaze);
+                    texMaze = LoadTextureFromImage(imMaze);
+                }
             }
 
             // TODO: [2p] Collectible map items: player score
             // Using same mechanism than maze editor, implement an items editor, registering
             // points in the map where items should be added for player pickup -> TIP: Use mazeItems[]
         }
+        else if (currentMode == 2)
+        {
+            
+        }
 
         // TODO: [1p] Multiple maze biomes supported
         // Implement changing between the different textures to be used as biomes
-        // NOTE: For the 3d model, the current selected texture must be applied to the model material  
-        
+        // NOTE: For the 3d model, the current selected texture must be applied to the model material        
         if (IsKeyPressed(KEY_ONE)) currentBiome = 0;
         if (IsKeyPressed(KEY_TWO)) currentBiome = 1;
         if (IsKeyPressed(KEY_THREE)) currentBiome = 2;
@@ -230,6 +275,10 @@ int main(void)
                             {
                                 DrawTextureRec(texBiomes[currentBiome], (Rectangle) { 0, 0, texBiomes[currentBiome].width / 2, texBiomes[currentBiome].height / 2 }, (Vector2) { mazePosition.x + x * texBiomes[currentBiome].width / 2, mazePosition.y + y * texBiomes[currentBiome].height / 2 }, WHITE);
                             }
+                            else if (ColorIsEqual(GetImageColor(imMaze, x, y), GREEN))
+                            {
+                                DrawTextureRec(texBiomes[currentBiome], (Rectangle) { 0, texBiomes[currentBiome].height / 2, texBiomes[currentBiome].width / 2, texBiomes[currentBiome].height / 2 }, (Vector2) { mazePosition.x + x * texBiomes[currentBiome].width / 2, mazePosition.y + y * texBiomes[currentBiome].height / 2 }, WHITE);
+                            }
                         }
                     }
              
@@ -258,6 +307,10 @@ int main(void)
                 // TODO: Draw player using a rectangle, consider maze screen coordinates!
 
                 // TODO: Draw editor UI required elements
+            }
+            else if (currentMode == 2)
+            {
+                
             }
 
             DrawFPS(10, 10);
@@ -301,7 +354,7 @@ static Image GenImageMaze(int width, int height, int spacingRows, int spacingCol
             }
             else if ((x % 4 == 0) && (y % 4 == 0))
             {
-                if (GetRandomValue(0, 100) < pointChance)
+                if (GetRandomValue(0, 10) < pointChance)
                 {
                     ImageDrawPixel(&imMaze, x, y, WHITE);
                     

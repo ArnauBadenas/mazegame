@@ -329,6 +329,13 @@ static Image GenImageMaze(int width, int height, int spacingRows, int spacingCol
         Point nextMazePoint = mazePoints[indices[i]];        
         nextMazePoint.x += dirIncrementals[dir].x;
         nextMazePoint.y += dirIncrementals[dir].y;
+        
+        while (ColorIsEqual(GetImageColor(imMaze, nextMazePoint.x, nextMazePoint.y), BLACK)) {
+            ImageDrawPixel(&imMaze, nextMazePoint.x, nextMazePoint.y, WHITE);
+
+            nextMazePoint.x += dirIncrementals[dir].x;
+            nextMazePoint.y += dirIncrementals[dir].y;
+        }
     }
     
     UnloadRandomSequence(indices);

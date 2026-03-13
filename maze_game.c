@@ -312,6 +312,8 @@ int main(void)
             {
                 // Draw maze using camera2d (for automatic positioning and scale)
                 BeginMode2D(camera2d);
+                
+                DrawText("Mode", screenWidth/2, screenHeight/2, 40, PINK);
 
                     // TODO: Draw maze walls and floor using current texture biome 
                     for (int y = 0; y < imMaze.height; y++)
@@ -359,6 +361,8 @@ int main(void)
                 // NOTE: Game UI does not receive the camera2d transformations,
                 // it is drawn in screen space coordinates directly
                 
+                
+                
                 DrawTextureEx(texMaze, (Vector2) { GetScreenWidth() - texMaze.width * 4.0f - 10, 10 }, 0.0f, 4.0f, WHITE);
                 DrawRectangle(GetScreenWidth() - texMaze.width * 4.0f - 10 + playerCell.x * 4.0f, 10 + playerCell.y * 4.0f, 4, 4, RED);
             }
@@ -371,11 +375,16 @@ int main(void)
                 DrawRectangleLines(mazePosition.x, mazePosition.y, MAZE_WIDTH*MAZE_SCALE, MAZE_HEIGHT*MAZE_SCALE, RED);
 
                 // TODO: Draw player using a rectangle, consider maze screen coordinates!
+                
 
                 // TODO: Draw editor UI required elements
+                
+                
             }
             else if (currentMode == 2)
             {
+               //poner sonido de victoria
+               
                DrawTexture(textureFinal, screenWidth/2 - textureFinal.width/2, screenHeight/1.3 - textureFinal.height/1.3, WHITE);
                DrawRectangle(screenWidth/2 - MeasureText("CONGRATULATIONS", 88)/2 - 15, 0, MeasureText("CONGRATULATIONS", 88) + 30,88, PINK);
                DrawText("CONGRATULATIONS", screenWidth/2 - MeasureText("CONGRATULATIONS", 88)/2, 0, 88, BLACK);

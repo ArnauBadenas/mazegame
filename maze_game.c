@@ -112,6 +112,8 @@ int main(void)
     bool mazeItemPicked[MAX_MAZE_ITEMS] = { 0 };
     int mazeItemCount = 0;
     
+    int score = 0;
+    
     // Define textures to be used as our "biomes"
     Texture texBiomes[4] = { 0 };
     texBiomes[0] = LoadTexture("resources/maze_atlas01.png");
@@ -215,7 +217,8 @@ int main(void)
                     if (playerCell.x == mazeItems[i].x && playerCell.y == mazeItems[i].y)
                     {
                         mazeItemPicked[i] = true;  
-                        PlaySound(itemPickUpSound); 
+                        PlaySound(itemPickUpSound);
+                        score++;
                         
                         ImageDrawPixel(&imMaze, mazeItems[i].x, mazeItems[i].y, BLACK);
                         UnloadTexture(texMaze);
@@ -365,6 +368,7 @@ int main(void)
                 
                 DrawTextureEx(texMaze, (Vector2) { GetScreenWidth() - texMaze.width * 4.0f - 10, 10 }, 0.0f, 4.0f, WHITE);
                 DrawRectangle(GetScreenWidth() - texMaze.width * 4.0f - 10 + playerCell.x * 4.0f, 10 + playerCell.y * 4.0f, 4, 4, RED);
+                DrawText(TextFormat("SCORE: %02i", score), 22, 42, 40, BLACK);
             }
             else if (currentMode == 1) // Editor mode
             {

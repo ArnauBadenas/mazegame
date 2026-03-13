@@ -124,6 +124,8 @@ int main(void)
     
     Texture texItem = LoadTexture("resources/coin.png");
     
+    Texture texPlayer = LoadTexture("resources/egg_player.png");
+    
     int currentBiome = 2;
 
     // TODO: Define all variables required for game UI elements (sprites, fonts...)
@@ -353,7 +355,7 @@ int main(void)
                     }
              
                     // TODO: Draw player rectangle or sprite at player position
-                    DrawRectangleRec(player, RED);
+                    DrawTexture(texPlayer,player.x,player.y,WHITE);
                     
                     // DELETE LATER
                     for (int i = 0; i < 4; i++) DrawRectangleLinesEx(playerBounds[i], 2.0f, GREEN);

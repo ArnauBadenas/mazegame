@@ -95,6 +95,8 @@ int main(void)
     Point playerCell = { 1, 1 };
     Rectangle playerBounds[4] = { 0 };
 
+    
+
     // Camera 2D for 2d gameplay mode
     // TODO: [2p] Initialize camera parameters as required
     Camera2D camera2d = { 0 };
@@ -108,6 +110,7 @@ int main(void)
     // Maze items position and state
     Point mazeItems[MAX_MAZE_ITEMS] = { 0 };
     bool mazeItemPicked[MAX_MAZE_ITEMS] = { 0 };
+    int mazeItemCount = 0;
     
     // Define textures to be used as our "biomes"
     Texture texBiomes[4] = { 0 };
@@ -116,6 +119,8 @@ int main(void)
     texBiomes[1] = LoadTexture("resources/maze_atlas02.png");
     texBiomes[2] = LoadTexture("resources/maze_atlas03.png");
     texBiomes[3] = LoadTexture("resources/maze_atlas04.png");
+    
+    Texture texItem = LoadTexture("resources/coin.png");
     
     int currentBiome = 2;
 
@@ -203,7 +208,21 @@ int main(void)
             else if (camera2d.zoom < 0.1f) camera2d.zoom = 0.1f;
 
             // TODO: [2p] Maze items pickup logic
-            // Usad esto: PlaySound(itemPickUpSound); para que suene cuando se coje un objecto :P
+            for (int i = 0; i < mazeItemCount; i++)
+            {
+                if (!mazeItemPicked[i])
+                {
+                    if (playerCell.x == mazeItems[i].x && playerCell.y == mazeItems[i].y)
+                    {
+                        mazeItemPicked[i] = true;  
+                        PlaySound(itemPickUpSound); 
+                        
+                        ImageDrawPixel(&imMaze, mazeItems[i].x, mazeItems[i].y, BLACK);
+                        UnloadTexture(texMaze);
+                        texMaze = LoadTextureFromImage(imMaze);
+                    }
+                }
+            }
         }
         else if (currentMode == 1) // Editor mode
         {
@@ -249,12 +268,18 @@ int main(void)
                     UnloadTexture(texMaze);
                     texMaze = LoadTextureFromImage(imMaze);
                 }
-                else if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE))
+                else if (IsMouseButtonPressed(MOUSE_BUTTON_MIDDLE))
                 {
-                    ImageDrawPixel(&imMaze, imagePoint.x, imagePoint.y, RED);
-                    
-                    UnloadTexture(texMaze);
-                    texMaze = LoadTextureFromImage(imMaze);
+                    if(mazeItemCount < MAX_MAZE_ITEMS){
+                        mazeItems[mazeItemCount] = (Point){ imagePoint.x, imagePoint.y };
+                        mazeItemPicked[mazeItemCount] = false;
+                        mazeItemCount++;
+                        
+                        ImageDrawPixel(&imMaze, imagePoint.x, imagePoint.y, RED);
+                        
+                        UnloadTexture(texMaze);
+                        texMaze = LoadTextureFromImage(imMaze);
+                    }
                 }
             }
 
@@ -305,6 +330,20 @@ int main(void)
                             {
                                 DrawTextureRec(texBiomes[currentBiome], (Rectangle) { 0, texBiomes[currentBiome].height / 2, texBiomes[currentBiome].width / 2, texBiomes[currentBiome].height / 2 }, (Vector2) { mazePosition.x + x * texBiomes[currentBiome].width / 2, mazePosition.y + y * texBiomes[currentBiome].height / 2 }, WHITE);
                             }
+                            else if (ColorIsEqual(GetImageColor(imMaze, x, y), RED))
+                            {
+                                // TODO: Draw maze items 2d (using sprite texture?)
+                                DrawTextureRec(texBiomes[currentBiome], 
+                                              (Rectangle) { 0, 0, texBiomes[currentBiome].width / 2, texBiomes[currentBiome].height / 2 }, 
+                                              (Vector2) { mazePosition.x + x * texBiomes[currentBiome].width / 2, mazePosition.y + y * texBiomes[currentBiome].height / 2 }, 
+                                              WHITE);
+
+                                DrawTexture(texItem, 
+                                            mazePosition.x + x * (texBiomes[currentBiome].width / 2), 
+                                            mazePosition.y + y * (texBiomes[currentBiome].height / 2), 
+                                            WHITE);
+                                            
+                            }
                         }
                     }
              
@@ -313,8 +352,6 @@ int main(void)
                     
                     // DELETE LATER
                     for (int i = 0; i < 4; i++) DrawRectangleLinesEx(playerBounds[i], 2.0f, GREEN);
-
-                    // TODO: Draw maze items 2d (using sprite texture?)
 
                 EndMode2D();
 

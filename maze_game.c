@@ -97,7 +97,7 @@ int main(void)
     float playerSpeed = 300.0f;
     
     Point playerCell = { 1, 1 };
-    Rectangle playerBounds[4] = { 0 };   
+    Rectangle playerBounds[8] = { 0 };   
 
     // Camera 2D for 2d gameplay mode
     // TODO: [2p] Initialize camera parameters as required
@@ -188,19 +188,31 @@ int main(void)
             playerBounds[1] = (Rectangle){ mazePosition.x + (playerCell.x + 1) * 128.0f , mazePosition.y + playerCell.y * 128.0f, 128.0f, 128.0f };
             playerBounds[2] = (Rectangle){ mazePosition.x + playerCell.x * 128.0f , mazePosition.y + (playerCell.y + 1) * 128.0f, 128.0f, 128.0f };
             playerBounds[3] = (Rectangle){ mazePosition.x + (playerCell.x - 1) * 128.0f , mazePosition.y + playerCell.y * 128.0f, 128.0f, 128.0f };
+            playerBounds[4] = (Rectangle){ mazePosition.x + (playerCell.x - 1) * 128.0f , mazePosition.y + (playerCell.y - 1) * 128.0f, 128.0f, 128.0f};
+            playerBounds[5] = (Rectangle){ mazePosition.x + (playerCell.x + 1) * 128.0f , mazePosition.y + (playerCell.y - 1) * 128.0f, 128.0f, 128.0f};
+            playerBounds[6] = (Rectangle){ mazePosition.x + (playerCell.x + 1) * 128.0f , mazePosition.y + (playerCell.y + 1) * 128.0f, 128.0f, 128.0f};
+            playerBounds[7] = (Rectangle){ mazePosition.x + (playerCell.x - 1) * 128.0f , mazePosition.y + (playerCell.y + 1) * 128.0f, 128.0f, 128.0f};
 
             if ((CheckCollisionRecs(player, playerBounds[0])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x, playerCell.y - 1), WHITE)) ||
-            (CheckCollisionRecs(player, playerBounds[1])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x + 1, playerCell.y), WHITE)) ||
-            (CheckCollisionRecs(player, playerBounds[2])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x, playerCell.y + 1), WHITE)) ||
-            (CheckCollisionRecs(player, playerBounds[3])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x - 1, playerCell.y), WHITE)))
+                (CheckCollisionRecs(player, playerBounds[1])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x + 1, playerCell.y), WHITE)) ||
+                (CheckCollisionRecs(player, playerBounds[2])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x, playerCell.y + 1), WHITE)) ||
+                (CheckCollisionRecs(player, playerBounds[3])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x - 1, playerCell.y), WHITE)) ||
+                (CheckCollisionRecs(player, playerBounds[4])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x - 1, playerCell.y - 1), WHITE)) ||
+                (CheckCollisionRecs(player, playerBounds[5])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x + 1, playerCell.y - 1), WHITE)) ||
+                (CheckCollisionRecs(player, playerBounds[6])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x + 1, playerCell.y + 1), WHITE)) ||
+                (CheckCollisionRecs(player, playerBounds[7])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x - 1, playerCell.y + 1), WHITE)))
             {
                 player = prevPlayer;
             }
-            
+
             if ((CheckCollisionRecs(player, playerBounds[0])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x, playerCell.y - 1), GREEN)) ||
-            (CheckCollisionRecs(player, playerBounds[1])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x + 1, playerCell.y), GREEN)) ||
-            (CheckCollisionRecs(player, playerBounds[2])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x, playerCell.y + 1), GREEN)) ||
-            (CheckCollisionRecs(player, playerBounds[3])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x - 1, playerCell.y), GREEN)))
+                (CheckCollisionRecs(player, playerBounds[1])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x + 1, playerCell.y), GREEN)) ||
+                (CheckCollisionRecs(player, playerBounds[2])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x, playerCell.y + 1), GREEN)) ||
+                (CheckCollisionRecs(player, playerBounds[3])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x - 1, playerCell.y), GREEN)) ||
+                (CheckCollisionRecs(player, playerBounds[4])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x - 1, playerCell.y - 1), GREEN)) ||
+                (CheckCollisionRecs(player, playerBounds[5])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x + 1, playerCell.y - 1), GREEN)) ||
+                (CheckCollisionRecs(player, playerBounds[6])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x + 1, playerCell.y + 1), GREEN)) ||
+                (CheckCollisionRecs(player, playerBounds[7])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x - 1, playerCell.y + 1), GREEN)))
             {
                 PlaySound(winSound);
                 currentMode = 2;
@@ -359,7 +371,7 @@ int main(void)
                     DrawTexture(texPlayer,player.x,player.y,WHITE);
                     
                     // DELETE LATER
-                    for (int i = 0; i < 4; i++) DrawRectangleLinesEx(playerBounds[i], 2.0f, GREEN);
+                    for (int i = 0; i < 8; i++) DrawRectangleLinesEx(playerBounds[i], 2.0f, GREEN);
 
                 EndMode2D();
 

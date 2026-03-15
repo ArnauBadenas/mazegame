@@ -375,9 +375,6 @@ int main(void)
              
                     // TODO: Draw player rectangle or sprite at player position
                     DrawTexture(texPlayer,player.x,player.y,WHITE);
-                    
-                    // DELETE LATER
-                    for (int i = 0; i < 8; i++) DrawRectangleLinesEx(playerBounds[i], 2.0f, GREEN);
 
                 EndMode2D();
 

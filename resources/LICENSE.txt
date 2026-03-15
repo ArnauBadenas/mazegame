@@ -14,3 +14,22 @@ By marking the work with a CC0 public domain dedication, the creator is giving u
 CC0: This work has been marked as dedicated to the public domain.
 
 Canonical URL: https://creativecommons.org/publicdomain/zero/1.0/
+
+-----------------------------------------------------------------------------------------
+Font licence: 
+Ari-W9500 is a pixel font created by Catterio (me), made in fontstruct.com and is free to use by any means.
+For more information, please visit the homepage of the font: https://fontstruct.com/fontstructions/show/2368522/ari-w9500
+
+-----------------------------------------------------------------------------------------
+Raylib logo licence:
+License: (Attribution-ShareAlike 4.0 International)
+    https://creativecommons.org/licenses/by-sa/4.0/
+
+-----------------------------------------------------------------------------------------
+Final scene image license:
+Image © Mattel. Used under parody/quotation exception
+Original image © Mattel. Used for parody. Edits/text not owned by us
+
+-----------------------------------------------------------------------------------------
+Win sound license:
+win.ogg by Yoshicakes77 -- https://freesound.org/s/703543/ -- License: Attribution 4.0

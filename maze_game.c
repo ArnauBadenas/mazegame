@@ -52,6 +52,10 @@ int main(void)
     PlayMusicStream(backgroundMusic);
     
     Sound itemPickUpSound = LoadSound("resources/item_pick_up.wav");
+    Sound winSound = LoadSound("resources/win_sound.ogg");
+    
+    // Initialize custom font
+    Font customFont = LoadFontEx("resources/ari_w9500_condensed_display.ttf", 40, 0, 250);
 
     // Current application mode
     int currentMode = 1;    // 0-Game, 1-Editor, 2-Ending
@@ -93,9 +97,7 @@ int main(void)
     float playerSpeed = 300.0f;
     
     Point playerCell = { 1, 1 };
-    Rectangle playerBounds[4] = { 0 };
-
-    
+    Rectangle playerBounds[4] = { 0 };   
 
     // Camera 2D for 2d gameplay mode
     // TODO: [2p] Initialize camera parameters as required
@@ -200,6 +202,7 @@ int main(void)
             (CheckCollisionRecs(player, playerBounds[2])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x, playerCell.y + 1), GREEN)) ||
             (CheckCollisionRecs(player, playerBounds[3])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x - 1, playerCell.y), GREEN)))
             {
+                PlaySound(winSound);
                 currentMode = 2;
             }
 
@@ -317,9 +320,7 @@ int main(void)
             {
                 // Draw maze using camera2d (for automatic positioning and scale)
                 BeginMode2D(camera2d);
-                
-                DrawText("Mode", screenWidth/2, screenHeight/2, 40, PINK);
-
+           
                     // TODO: Draw maze walls and floor using current texture biome 
                     for (int y = 0; y < imMaze.height; y++)
                     {
@@ -364,13 +365,12 @@ int main(void)
 
                 // TODO: Draw game UI (score, time...) using custom sprites/fonts
                 // NOTE: Game UI does not receive the camera2d transformations,
-                // it is drawn in screen space coordinates directly
-                
-                
-                
+                // it is drawn in screen space coordinates directly    
                 DrawTextureEx(texMaze, (Vector2) { GetScreenWidth() - texMaze.width * 4.0f - 10, 10 }, 0.0f, 4.0f, WHITE);
                 DrawRectangle(GetScreenWidth() - texMaze.width * 4.0f - 10 + playerCell.x * 4.0f, 10 + playerCell.y * 4.0f, 4, 4, RED);
-                DrawText(TextFormat("SCORE: %02i", score), 22, 42, 40, BLACK);
+                DrawRectangle(0, 35, MeasureText("SCORE: AAAA", 40), 40, WHITE);
+                DrawTextEx(customFont, TextFormat("SCORE: %02i", score), (Vector2){22.0f,42.0f}, 35, 1, BLACK);
+                
             }
             else if (currentMode == 1) // Editor mode
             {
@@ -381,19 +381,14 @@ int main(void)
                 DrawRectangleLines(mazePosition.x, mazePosition.y, MAZE_WIDTH*MAZE_SCALE, MAZE_HEIGHT*MAZE_SCALE, RED);
 
                 // TODO: Draw player using a rectangle, consider maze screen coordinates!
-                
-
                 // TODO: Draw editor UI required elements
-                
                 
             }
             else if (currentMode == 2)
-            {
-               //poner sonido de victoria
-               
+            {             
                DrawTexture(textureFinal, screenWidth/2 - textureFinal.width/2, screenHeight/1.3 - textureFinal.height/1.3, WHITE);
-               DrawRectangle(screenWidth/2 - MeasureText("CONGRATULATIONS", 88)/2 - 15, 0, MeasureText("CONGRATULATIONS", 88) + 30,88, PINK);
-               DrawText("CONGRATULATIONS", screenWidth/2 - MeasureText("CONGRATULATIONS", 88)/2, 0, 88, BLACK);
+               DrawRectangle(screenWidth/2 - MeasureText("CONGRATULATIONS", 70)/2 - 15, 0, MeasureText("CONGRATULATIONS", 70) + 30, 70, PINK);
+               DrawTextEx(customFont,"CONGRATULATIONS", (Vector2){screenWidth/2 - MeasureText("CONGRATULATIONS", 70)/2, 5.0f}, 70, 1, BLACK);
             }
 
             DrawFPS(10, 10);
@@ -413,6 +408,8 @@ int main(void)
     for (int i = 0; i < 4; i++) UnloadTexture(texBiomes[i]);
     UnloadMusicStream(backgroundMusic);
     UnloadSound(itemPickUpSound);
+    UnloadSound(winSound);
+    UnloadFont(customFont);
     
     CloseAudioDevice();
     

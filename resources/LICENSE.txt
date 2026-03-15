@@ -21,7 +21,7 @@ Ari-W9500 is a pixel font created by Catterio (me), made in fontstruct.com and i
 For more information, please visit the homepage of the font: https://fontstruct.com/fontstructions/show/2368522/ari-w9500
 
 -----------------------------------------------------------------------------------------
-Final scene image license:
+Final scene image and player license:
 
 Final scene image was crated by Alexia Martínez. 
 The Iage is licensed under a CC BY-NC 4.0.  https://creativecommons.org/licenses/by-nc/4.0/

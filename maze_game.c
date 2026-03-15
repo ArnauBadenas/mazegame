@@ -175,6 +175,10 @@ int main(void)
             // Detect if current playerCell == endCell to finish game
 
             Rectangle prevPlayer = player;
+            const Point offsets[8] = {
+                { 0, -1}, { 1,  0}, { 0,  1}, {-1,  0},
+                {-1, -1}, { 1, -1}, { 1,  1}, {-1,  1}
+            };
             
             if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)) player.y -= (playerSpeed * GetFrameTime());
             if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S)) player.y += (playerSpeed * GetFrameTime());
@@ -184,35 +188,37 @@ int main(void)
             playerCell.x = (int)((player.x + player.width / 2 - mazePosition.x) / ((float)texBiomes[currentBiome].width * 0.5f));
             playerCell.y = (int)((player.y + player.height / 2 - mazePosition.y) / ((float)texBiomes[currentBiome].height * 0.5f));
             
-            playerBounds[0] = (Rectangle){ mazePosition.x + playerCell.x * 128.0f , mazePosition.y + (playerCell.y - 1) * 128.0f, 128.0f, 128.0f};
-            playerBounds[1] = (Rectangle){ mazePosition.x + (playerCell.x + 1) * 128.0f , mazePosition.y + playerCell.y * 128.0f, 128.0f, 128.0f };
-            playerBounds[2] = (Rectangle){ mazePosition.x + playerCell.x * 128.0f , mazePosition.y + (playerCell.y + 1) * 128.0f, 128.0f, 128.0f };
-            playerBounds[3] = (Rectangle){ mazePosition.x + (playerCell.x - 1) * 128.0f , mazePosition.y + playerCell.y * 128.0f, 128.0f, 128.0f };
-            playerBounds[4] = (Rectangle){ mazePosition.x + (playerCell.x - 1) * 128.0f , mazePosition.y + (playerCell.y - 1) * 128.0f, 128.0f, 128.0f};
-            playerBounds[5] = (Rectangle){ mazePosition.x + (playerCell.x + 1) * 128.0f , mazePosition.y + (playerCell.y - 1) * 128.0f, 128.0f, 128.0f};
-            playerBounds[6] = (Rectangle){ mazePosition.x + (playerCell.x + 1) * 128.0f , mazePosition.y + (playerCell.y + 1) * 128.0f, 128.0f, 128.0f};
-            playerBounds[7] = (Rectangle){ mazePosition.x + (playerCell.x - 1) * 128.0f , mazePosition.y + (playerCell.y + 1) * 128.0f, 128.0f, 128.0f};
+            bool hitWall = false;
+            bool hitWin = false;
 
-            if ((CheckCollisionRecs(player, playerBounds[0])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x, playerCell.y - 1), WHITE)) ||
-                (CheckCollisionRecs(player, playerBounds[1])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x + 1, playerCell.y), WHITE)) ||
-                (CheckCollisionRecs(player, playerBounds[2])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x, playerCell.y + 1), WHITE)) ||
-                (CheckCollisionRecs(player, playerBounds[3])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x - 1, playerCell.y), WHITE)) ||
-                (CheckCollisionRecs(player, playerBounds[4])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x - 1, playerCell.y - 1), WHITE)) ||
-                (CheckCollisionRecs(player, playerBounds[5])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x + 1, playerCell.y - 1), WHITE)) ||
-                (CheckCollisionRecs(player, playerBounds[6])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x + 1, playerCell.y + 1), WHITE)) ||
-                (CheckCollisionRecs(player, playerBounds[7])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x - 1, playerCell.y + 1), WHITE)))
+            for (int i = 0; i < 8; i++) 
             {
-                player = prevPlayer;
+                // Calculate grid coordinates for the cell that we are gonna check
+                int checkX = playerCell.x + offsets[i].x;
+                int checkY = playerCell.y + offsets[i].y;
+
+                // Calculate this cell's rectangle
+                playerBounds[i] = (Rectangle){ 
+                    mazePosition.x + checkX * 128.0f, 
+                    mazePosition.y + checkY * 128.0f, 
+                    128.0f, 128.0f 
+                };
+
+                if (CheckCollisionRecs(player, playerBounds[i])) 
+                {
+                    // Check pixel color on current cell
+                    Color cellColor = GetImageColor(imMaze, checkX, checkY);
+                    
+                    if (ColorIsEqual(cellColor, WHITE)) hitWall = true;
+                    if (ColorIsEqual(cellColor, GREEN)) hitWin = true;
+                }
             }
 
-            if ((CheckCollisionRecs(player, playerBounds[0])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x, playerCell.y - 1), GREEN)) ||
-                (CheckCollisionRecs(player, playerBounds[1])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x + 1, playerCell.y), GREEN)) ||
-                (CheckCollisionRecs(player, playerBounds[2])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x, playerCell.y + 1), GREEN)) ||
-                (CheckCollisionRecs(player, playerBounds[3])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x - 1, playerCell.y), GREEN)) ||
-                (CheckCollisionRecs(player, playerBounds[4])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x - 1, playerCell.y - 1), GREEN)) ||
-                (CheckCollisionRecs(player, playerBounds[5])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x + 1, playerCell.y - 1), GREEN)) ||
-                (CheckCollisionRecs(player, playerBounds[6])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x + 1, playerCell.y + 1), GREEN)) ||
-                (CheckCollisionRecs(player, playerBounds[7])) && (ColorIsEqual(GetImageColor(imMaze, playerCell.x - 1, playerCell.y + 1), GREEN)))
+            if (hitWall) 
+            {
+                player = prevPlayer; 
+            }
+            else if (hitWin)
             {
                 PlaySound(winSound);
                 currentMode = 2;

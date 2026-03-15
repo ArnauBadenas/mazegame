@@ -6,7 +6,6 @@ The following textures are licensed under a CC0 1.0 Universal.
  - maze_atlas03.png
  - maze_atlas04.png
 
-
 CC0 1.0 Universal
 
 By marking the work with a CC0 public domain dedication, the creator is giving up their copyright and allowing reusers to distribute, remix, adapt, and build upon the material in any medium or format, even for commercial purposes.
@@ -24,8 +23,12 @@ For more information, please visit the homepage of the font: https://fontstruct.
 Final scene image and player license:
 
 Final scene image was crated by Alexia Martínez. 
-The Iage is licensed under a CC BY-NC 4.0.  https://creativecommons.org/licenses/by-nc/4.0/
+The image is licensed under a CC BY-NC 4.0.  https://creativecommons.org/licenses/by-nc/4.0/
 
 -----------------------------------------------------------------------------------------
+
 Win sound license:
 win.ogg by Yoshicakes77 -- https://freesound.org/s/703543/ -- License: Attribution 4.0
+
+Background music by abstractionmusic.com license under CC0 1.0 Universal
+Item pick up sound by [Kronbits](https://kronbits.itch.io/) license under CC0 1.0 Universal

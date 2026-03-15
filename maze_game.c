@@ -133,7 +133,7 @@ int main(void)
     // TODO: Define all variables required for game UI elements (sprites, fonts...)
     
     //Image for final scene (when game ends)
-    Image finalImage = LoadImage("resources/Image_Final_Scene.png");
+    Image finalImage = LoadImage("resources/image_final_scene.png");
     ImageResize(&finalImage, screenWidth, screenHeight);
     Texture textureFinal = LoadTextureFromImage(finalImage);
     
@@ -382,7 +382,7 @@ int main(void)
                 // NOTE: Game UI does not receive the camera2d transformations,
                 // it is drawn in screen space coordinates directly    
                 DrawTextureEx(texMaze, (Vector2) { GetScreenWidth() - texMaze.width * 4.0f - 10, 10 }, 0.0f, 4.0f, WHITE);
-                DrawRectangle(GetScreenWidth() - texMaze.width * 4.0f - 10 + playerCell.x * 4.0f, 10 + playerCell.y * 4.0f, 4, 4, RED);
+                DrawRectangle(GetScreenWidth() - texMaze.width * 4.0f - 10 + playerCell.x * 4.0f, 10 + playerCell.y * 4.0f, 4, 4, BLUE);
                 DrawRectangle(0, 35, MeasureText("SCORE: AAAA", 40), 40, WHITE);
                 DrawTextEx(customFont, TextFormat("SCORE: %02i", score), (Vector2){22.0f,42.0f}, 35, 1, BLACK);
                 

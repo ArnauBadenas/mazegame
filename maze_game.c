@@ -391,6 +391,7 @@ int main(void)
                 DrawRectangleLines(mazePosition.x, mazePosition.y, MAZE_WIDTH*MAZE_SCALE, MAZE_HEIGHT*MAZE_SCALE, RED);
 
                 // TODO: Draw player using a rectangle, consider maze screen coordinates!
+                DrawRectangle(mazePosition.x + playerCell.x * MAZE_SCALE, mazePosition.y + playerCell.y * MAZE_SCALE, MAZE_SCALE, MAZE_SCALE, BLUE);
                 // TODO: Draw editor UI required elements
                 
             }

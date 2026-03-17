@@ -54,7 +54,7 @@ int main(void)
     Sound itemPickUpSound = LoadSound("resources/item_pick_up.wav");
     Sound winSound = LoadSound("resources/win_sound.ogg");
     
-    // Initialize custom font
+    // Declare and initialize custom font
     Font customFont = LoadFontEx("resources/ari_w9500_condensed_display.ttf", 40, 0, 250);
 
     // Current application mode
@@ -82,11 +82,8 @@ int main(void)
         GetScreenWidth()/2 - texMaze.width*MAZE_SCALE/2,
         GetScreenHeight()/2 - texMaze.height*MAZE_SCALE/2
     };
-    
-    Point mousePoint = { 0 };
-    Point imagePoint = { 0 };
-    
-    Point endPoint = { GetRandomValue(1, texMaze.width - 2), GetRandomValue(1, texMaze.width - 2) };
+        
+    Point endPoint = { endCell.x, endCell.y };
     ImageDrawPixel(&imMaze, endPoint.x, endPoint.y, GREEN);
     
     UnloadTexture(texMaze);
@@ -96,7 +93,10 @@ int main(void)
     Rectangle player = { mazePosition.x + 1*MAZE_SCALE + 128, mazePosition.y + 1*MAZE_SCALE + 128, 50, 50 };
     float playerSpeed = 300.0f;
     
-    Point playerCell = { 1, 1 };
+    Point playerCell;
+    playerCell.x = startCell.x;
+    playerCell.y = startCell.y;
+    
     Rectangle playerBounds[8] = { 0 };   
 
     // Camera 2D for 2d gameplay mode
@@ -108,6 +108,7 @@ int main(void)
 
     // Mouse selected cell for maze editing
     Point selectedCell = { 0 };
+    Point mouseCell = { 0 };
 
     // Maze items position and state
     Point mazeItems[MAX_MAZE_ITEMS] = { 0 };
@@ -125,7 +126,6 @@ int main(void)
     texBiomes[3] = LoadTexture("resources/maze_atlas04.png");
     
     Texture texItem = LoadTexture("resources/coin.png");
-    
     Texture texPlayer = LoadTexture("resources/egg_player.png");
     
     int currentBiome = 2;
@@ -133,9 +133,10 @@ int main(void)
     // TODO: Define all variables required for game UI elements (sprites, fonts...)
     
     //Image for final scene (when game ends)
-    Image finalImage = LoadImage("resources/image_final_scene.png");
-    ImageResize(&finalImage, screenWidth, screenHeight);
-    Texture textureFinal = LoadTextureFromImage(finalImage);
+    Image imFinal = LoadImage("resources/image_final_scene.png");
+    ImageResize(&imFinal, screenWidth, screenHeight);
+    
+    Texture texFinal = LoadTextureFromImage(imFinal);
     
     // Set our game to run at 60 frames-per-second
     SetTargetFPS(60); 
@@ -159,8 +160,9 @@ int main(void)
             
             imMaze = GenImageMaze(MAZE_WIDTH, MAZE_HEIGHT, 4, 4, 0.75f);
             
-            endPoint.x = GetRandomValue(1, texMaze.width - 2);
-            endPoint.y = GetRandomValue(1, texMaze.width - 2);
+            endPoint.x = endCell.x;
+            endPoint.y = endCell.y;
+            
             ImageDrawPixel(&imMaze, endPoint.x, endPoint.y, GREEN);
             
             UnloadTexture(texMaze);
@@ -175,6 +177,7 @@ int main(void)
             // Detect if current playerCell == endCell to finish game
 
             Rectangle prevPlayer = player;
+            
             const Point offsets[8] = {
                 { 0, -1}, { 1,  0}, { 0,  1}, {-1,  0},
                 {-1, -1}, { 1, -1}, { 1,  1}, {-1,  1}
@@ -190,10 +193,10 @@ int main(void)
             
             bool hitWall = false;
             bool hitWin = false;
-
+            
             for (int i = 0; i < 8; i++) 
             {
-                // Calculate grid coordinates for the cell that we are gonna check
+                // Calculate grid coordinates for the cell that we are going to check
                 int checkX = playerCell.x + offsets[i].x;
                 int checkY = playerCell.y + offsets[i].y;
 
@@ -239,11 +242,12 @@ int main(void)
                 {
                     if (playerCell.x == mazeItems[i].x && playerCell.y == mazeItems[i].y)
                     {
-                        mazeItemPicked[i] = true;  
+                        mazeItemPicked[i] = true;
                         PlaySound(itemPickUpSound);
                         score++;
                         
                         ImageDrawPixel(&imMaze, mazeItems[i].x, mazeItems[i].y, BLACK);
+                        
                         UnloadTexture(texMaze);
                         texMaze = LoadTextureFromImage(imMaze);
                     }
@@ -260,20 +264,20 @@ int main(void)
             
             // WARNING: Remember that when imMaze changes, texMaze must be also updated!
             
-            mousePoint.x = GetMouseX();
-            mousePoint.y = GetMouseY();
+            mouseCell.x = GetMouseX();
+            mouseCell.y = GetMouseY();
             
-            imagePoint.x = (mousePoint.x - mazePosition.x) / MAZE_SCALE;
-            imagePoint.y = (mousePoint.y - mazePosition.y) / MAZE_SCALE;
+            selectedCell.x = (mouseCell.x - mazePosition.x) / MAZE_SCALE;
+            selectedCell.y = (mouseCell.y - mazePosition.y) / MAZE_SCALE;
             
-            if ((imagePoint.x >= 0) && (imagePoint.y >= 0) && (imagePoint.x < imMaze.width) && (imagePoint.y < imMaze.height))
+            if ((selectedCell.x >= 0) && (selectedCell.y >= 0) && (selectedCell.x < imMaze.width) && (selectedCell.y < imMaze.height))
             {
                 if (IsKeyDown(KEY_LEFT_CONTROL) && IsMouseButtonDown(MOUSE_RIGHT_BUTTON))
                 {
-                    ImageDrawPixel(&imMaze, endPoint.x, endPoint.y, WHITE);
+                    ImageDrawPixel(&imMaze, endPoint.x, endPoint.y, BLACK);
                     
-                    endPoint.x = imagePoint.x;
-                    endPoint.y = imagePoint.y;
+                    endPoint.x = selectedCell.x;
+                    endPoint.y = selectedCell.y;
                     
                     ImageDrawPixel(&imMaze, endPoint.x, endPoint.y, GREEN);
                     
@@ -282,26 +286,27 @@ int main(void)
                 }
                 else if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
                 {
-                    ImageDrawPixel(&imMaze, imagePoint.x, imagePoint.y, WHITE);
+                    ImageDrawPixel(&imMaze, selectedCell.x, selectedCell.y, WHITE);
                     
                     UnloadTexture(texMaze);
                     texMaze = LoadTextureFromImage(imMaze);
                 }
                 else if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON))
                 {
-                    ImageDrawPixel(&imMaze, imagePoint.x, imagePoint.y, BLACK);
+                    ImageDrawPixel(&imMaze, selectedCell.x, selectedCell.y, BLACK);
                     
                     UnloadTexture(texMaze);
                     texMaze = LoadTextureFromImage(imMaze);
                 }
                 else if (IsMouseButtonPressed(MOUSE_BUTTON_MIDDLE))
                 {
-                    if(mazeItemCount < MAX_MAZE_ITEMS){
-                        mazeItems[mazeItemCount] = (Point){ imagePoint.x, imagePoint.y };
+                    if (mazeItemCount < MAX_MAZE_ITEMS)
+                    {
+                        mazeItems[mazeItemCount] = (Point){ selectedCell.x, selectedCell.y };
                         mazeItemPicked[mazeItemCount] = false;
                         mazeItemCount++;
                         
-                        ImageDrawPixel(&imMaze, imagePoint.x, imagePoint.y, RED);
+                        ImageDrawPixel(&imMaze, selectedCell.x, selectedCell.y, RED);
                         
                         UnloadTexture(texMaze);
                         texMaze = LoadTextureFromImage(imMaze);
@@ -312,10 +317,6 @@ int main(void)
             // TODO: [2p] Collectible map items: player score
             // Using same mechanism than maze editor, implement an items editor, registering
             // points in the map where items should be added for player pickup -> TIP: Use mazeItems[]
-        }
-        else if (currentMode == 2)
-        {
-            
         }
 
         // TODO: [1p] Multiple maze biomes supported
@@ -359,16 +360,9 @@ int main(void)
                             else if (ColorIsEqual(GetImageColor(imMaze, x, y), RED))
                             {
                                 // TODO: Draw maze items 2d (using sprite texture?)
-                                DrawTextureRec(texBiomes[currentBiome], 
-                                              (Rectangle) { 0, 0, texBiomes[currentBiome].width / 2, texBiomes[currentBiome].height / 2 }, 
-                                              (Vector2) { mazePosition.x + x * texBiomes[currentBiome].width / 2, mazePosition.y + y * texBiomes[currentBiome].height / 2 }, 
-                                              WHITE);
+                                DrawTextureRec(texBiomes[currentBiome], (Rectangle) { 0, 0, texBiomes[currentBiome].width / 2, texBiomes[currentBiome].height / 2 }, (Vector2) { mazePosition.x + x * texBiomes[currentBiome].width / 2, mazePosition.y + y * texBiomes[currentBiome].height / 2 }, WHITE);
 
-                                DrawTexture(texItem, 
-                                            mazePosition.x + x * (texBiomes[currentBiome].width / 2), 
-                                            mazePosition.y + y * (texBiomes[currentBiome].height / 2), 
-                                            WHITE);
-                                            
+                                DrawTexture(texItem, mazePosition.x + x * (texBiomes[currentBiome].width / 2), mazePosition.y + y * (texBiomes[currentBiome].height / 2), WHITE);
                             }
                         }
                     }
@@ -383,6 +377,7 @@ int main(void)
                 // it is drawn in screen space coordinates directly    
                 DrawTextureEx(texMaze, (Vector2) { GetScreenWidth() - texMaze.width * 4.0f - 10, 10 }, 0.0f, 4.0f, WHITE);
                 DrawRectangle(GetScreenWidth() - texMaze.width * 4.0f - 10 + playerCell.x * 4.0f, 10 + playerCell.y * 4.0f, 4, 4, BLUE);
+                
                 DrawRectangle(0, 35, MeasureText("SCORE: AAAA", 40), 40, WHITE);
                 DrawTextEx(customFont, TextFormat("SCORE: %02i", score), (Vector2){22.0f,42.0f}, 35, 1, BLACK);
                 
@@ -401,7 +396,7 @@ int main(void)
             }
             else if (currentMode == 2)
             {             
-               DrawTexture(textureFinal, screenWidth/2 - textureFinal.width/2, screenHeight/1.3 - textureFinal.height/1.3, WHITE);
+               DrawTexture(texFinal, screenWidth/2 - texFinal.width/2, screenHeight/1.3 - texFinal.height/1.3, WHITE);
                DrawRectangle(screenWidth/2 - MeasureText("CONGRATULATIONS", 70)/2 - 15, 0, MeasureText("CONGRATULATIONS", 70) + 30, 70, PINK);
                DrawTextEx(customFont,"CONGRATULATIONS", (Vector2){screenWidth/2 - MeasureText("CONGRATULATIONS", 70)/2, 5.0f}, 70, 1, BLACK);
             }
@@ -416,14 +411,17 @@ int main(void)
     //--------------------------------------------------------------------------------------
     UnloadTexture(texMaze);     // Unload maze texture from VRAM (GPU)
     UnloadImage(imMaze);        // Unload maze image from RAM (CPU)
-    UnloadTexture(textureFinal);
-    UnloadImage(finalImage);
+    
+    UnloadTexture(texFinal);
+    UnloadImage(imFinal);
     
     // TODO: Unload all loaded resources
     for (int i = 0; i < 4; i++) UnloadTexture(texBiomes[i]);
+    
     UnloadMusicStream(backgroundMusic);
     UnloadSound(itemPickUpSound);
     UnloadSound(winSound);
+    
     UnloadFont(customFont);
     
     CloseAudioDevice();

@@ -274,6 +274,8 @@ int main(void)
             {
                 if (IsKeyDown(KEY_LEFT_CONTROL) && IsMouseButtonDown(MOUSE_RIGHT_BUTTON))
                 {
+                    if (ColorIsEqual(GetImageColor(imMaze, selectedCell.x, selectedCell.y), RED)) mazeItemCount--;
+                    
                     ImageDrawPixel(&imMaze, endPoint.x, endPoint.y, BLACK);
                     
                     endPoint.x = selectedCell.x;
@@ -286,6 +288,8 @@ int main(void)
                 }
                 else if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
                 {
+                    if (ColorIsEqual(GetImageColor(imMaze, selectedCell.x, selectedCell.y), RED)) mazeItemCount--;
+                    
                     ImageDrawPixel(&imMaze, selectedCell.x, selectedCell.y, WHITE);
                     
                     UnloadTexture(texMaze);
@@ -293,6 +297,8 @@ int main(void)
                 }
                 else if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON))
                 {
+                    if (ColorIsEqual(GetImageColor(imMaze, selectedCell.x, selectedCell.y), RED)) mazeItemCount--;
+                    
                     ImageDrawPixel(&imMaze, selectedCell.x, selectedCell.y, BLACK);
                     
                     UnloadTexture(texMaze);
@@ -393,10 +399,10 @@ int main(void)
                 // TODO: Draw player using a rectangle, consider maze screen coordinates!
                 DrawRectangle(mazePosition.x + playerCell.x * MAZE_SCALE, mazePosition.y + playerCell.y * MAZE_SCALE, MAZE_SCALE, MAZE_SCALE, BLUE);
                 // TODO: Draw editor UI required elements
-                
+                DrawTextEx(customFont, "EDITING MODE", (Vector2){GetScreenWidth() / 2 - MeasureText("EDITING MODE", 20) / 2, 10 }, 20, 1, BLACK);
             }
             else if (currentMode == 2)
-            {             
+            {
                DrawTexture(texFinal, screenWidth/2 - texFinal.width/2, screenHeight/1.3 - texFinal.height/1.3, WHITE);
                DrawRectangle(screenWidth/2 - MeasureText("CONGRATULATIONS", 70)/2 - 15, 0, MeasureText("CONGRATULATIONS", 70) + 30, 70, PINK);
                DrawTextEx(customFont,"CONGRATULATIONS", (Vector2){screenWidth/2 - MeasureText("CONGRATULATIONS", 70)/2, 5.0f}, 70, 1, BLACK);

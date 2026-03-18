@@ -82,7 +82,7 @@ int main(void)
         GetScreenWidth()/2 - texMaze.width*MAZE_SCALE/2,
         GetScreenHeight()/2 - texMaze.height*MAZE_SCALE/2
     };
-        
+    
     Point endPoint = { endCell.x, endCell.y };
     ImageDrawPixel(&imMaze, endPoint.x, endPoint.y, GREEN);
     
@@ -240,7 +240,7 @@ int main(void)
             {
                 if (!mazeItemPicked[i])
                 {
-                    if (playerCell.x == mazeItems[i].x && playerCell.y == mazeItems[i].y)
+                    if ((playerCell.x == mazeItems[i].x) && (playerCell.y == mazeItems[i].y))
                     {
                         mazeItemPicked[i] = true;
                         PlaySound(itemPickUpSound);
@@ -308,6 +308,9 @@ int main(void)
                 {
                     if (mazeItemCount < MAX_MAZE_ITEMS)
                     {
+                        // TODO: [2p] Collectible map items: player score
+                        // Using same mechanism than maze editor, implement an items editor, registering
+                        // points in the map where items should be added for player pickup -> TIP: Use mazeItems[]
                         mazeItems[mazeItemCount] = (Point){ selectedCell.x, selectedCell.y };
                         mazeItemPicked[mazeItemCount] = false;
                         mazeItemCount++;
@@ -319,10 +322,6 @@ int main(void)
                     }
                 }
             }
-
-            // TODO: [2p] Collectible map items: player score
-            // Using same mechanism than maze editor, implement an items editor, registering
-            // points in the map where items should be added for player pickup -> TIP: Use mazeItems[]
         }
 
         // TODO: [1p] Multiple maze biomes supported
@@ -353,20 +352,20 @@ int main(void)
                         {
                             if (ColorIsEqual(GetImageColor(imMaze, x, y), WHITE))
                             {
-                                DrawTextureRec(texBiomes[currentBiome], (Rectangle) { texBiomes[currentBiome].width / 2, texBiomes[currentBiome].height / 2, texBiomes[currentBiome].width / 2, texBiomes[currentBiome].height / 2 }, (Vector2) { mazePosition.x + x * texBiomes[currentBiome].width / 2, mazePosition.y + y * texBiomes[currentBiome].height / 2 }, WHITE);
+                                DrawTextureRec(texBiomes[currentBiome], (Rectangle){ texBiomes[currentBiome].width / 2, texBiomes[currentBiome].height / 2, texBiomes[currentBiome].width / 2, texBiomes[currentBiome].height / 2 }, (Vector2){ mazePosition.x + x * texBiomes[currentBiome].width / 2, mazePosition.y + y * texBiomes[currentBiome].height / 2 }, WHITE);
                             }
                             else if (ColorIsEqual(GetImageColor(imMaze, x, y), BLACK))
                             {
-                                DrawTextureRec(texBiomes[currentBiome], (Rectangle) { 0, 0, texBiomes[currentBiome].width / 2, texBiomes[currentBiome].height / 2 }, (Vector2) { mazePosition.x + x * texBiomes[currentBiome].width / 2, mazePosition.y + y * texBiomes[currentBiome].height / 2 }, WHITE);
+                                DrawTextureRec(texBiomes[currentBiome], (Rectangle){ 0, 0, texBiomes[currentBiome].width / 2, texBiomes[currentBiome].height / 2 }, (Vector2){ mazePosition.x + x * texBiomes[currentBiome].width / 2, mazePosition.y + y * texBiomes[currentBiome].height / 2 }, WHITE);
                             }
                             else if (ColorIsEqual(GetImageColor(imMaze, x, y), GREEN))
                             {
-                                DrawTextureRec(texBiomes[currentBiome], (Rectangle) { 0, texBiomes[currentBiome].height / 2, texBiomes[currentBiome].width / 2, texBiomes[currentBiome].height / 2 }, (Vector2) { mazePosition.x + x * texBiomes[currentBiome].width / 2, mazePosition.y + y * texBiomes[currentBiome].height / 2 }, WHITE);
+                                DrawTextureRec(texBiomes[currentBiome], (Rectangle){ 0, texBiomes[currentBiome].height / 2, texBiomes[currentBiome].width / 2, texBiomes[currentBiome].height / 2 }, (Vector2){ mazePosition.x + x * texBiomes[currentBiome].width / 2, mazePosition.y + y * texBiomes[currentBiome].height / 2 }, WHITE);
                             }
                             else if (ColorIsEqual(GetImageColor(imMaze, x, y), RED))
                             {
                                 // TODO: Draw maze items 2d (using sprite texture?)
-                                DrawTextureRec(texBiomes[currentBiome], (Rectangle) { 0, 0, texBiomes[currentBiome].width / 2, texBiomes[currentBiome].height / 2 }, (Vector2) { mazePosition.x + x * texBiomes[currentBiome].width / 2, mazePosition.y + y * texBiomes[currentBiome].height / 2 }, WHITE);
+                                DrawTextureRec(texBiomes[currentBiome], (Rectangle){ 0, 0, texBiomes[currentBiome].width / 2, texBiomes[currentBiome].height / 2 }, (Vector2){ mazePosition.x + x * texBiomes[currentBiome].width / 2, mazePosition.y + y * texBiomes[currentBiome].height / 2 }, WHITE);
 
                                 DrawTexture(texItem, mazePosition.x + x * (texBiomes[currentBiome].width / 2), mazePosition.y + y * (texBiomes[currentBiome].height / 2), WHITE);
                             }
@@ -374,19 +373,18 @@ int main(void)
                     }
              
                     // TODO: Draw player rectangle or sprite at player position
-                    DrawTexture(texPlayer,player.x,player.y,WHITE);
+                    DrawTexture(texPlayer, player.x, player.y, WHITE);
 
                 EndMode2D();
 
                 // TODO: Draw game UI (score, time...) using custom sprites/fonts
                 // NOTE: Game UI does not receive the camera2d transformations,
                 // it is drawn in screen space coordinates directly    
-                DrawTextureEx(texMaze, (Vector2) { GetScreenWidth() - texMaze.width * 4.0f - 10, 10 }, 0.0f, 4.0f, WHITE);
+                DrawTextureEx(texMaze, (Vector2){ GetScreenWidth() - texMaze.width * 4.0f - 10, 10 }, 0.0f, 4.0f, WHITE);
                 DrawRectangle(GetScreenWidth() - texMaze.width * 4.0f - 10 + playerCell.x * 4.0f, 10 + playerCell.y * 4.0f, 4, 4, BLUE);
                 
                 DrawRectangle(0, 35, MeasureText("SCORE: AAAA", 40), 40, WHITE);
                 DrawTextEx(customFont, TextFormat("SCORE: %02i", score), (Vector2){22.0f,42.0f}, 35, 1, BLACK);
-                
             }
             else if (currentMode == 1) // Editor mode
             {
@@ -421,6 +419,9 @@ int main(void)
     
     UnloadTexture(texFinal);
     UnloadImage(imFinal);
+    
+    UnloadTexture(texPlayer);
+    UnloadTexture(texItem);
     
     // TODO: Unload all loaded resources
     for (int i = 0; i < 4; i++) UnloadTexture(texBiomes[i]);
@@ -461,7 +462,7 @@ static Image GenImageMaze(int width, int height, int spacingRows, int spacingCol
             }
             else if ((x % 4 == 0) && (y % 4 == 0))
             {
-                if (GetRandomValue(0, 10) < pointChance)
+                if (GetRandomValue(0, 1) < pointChance)
                 {
                     ImageDrawPixel(&imMaze, x, y, WHITE);
                     

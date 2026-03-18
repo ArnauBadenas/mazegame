@@ -286,7 +286,7 @@ int main(void)
                     UnloadTexture(texMaze);
                     texMaze = LoadTextureFromImage(imMaze);
                 }
-                else if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
+                else if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON))
                 {
                     if (ColorIsEqual(GetImageColor(imMaze, selectedCell.x, selectedCell.y), RED)) mazeItemCount--;
                     
@@ -295,7 +295,7 @@ int main(void)
                     UnloadTexture(texMaze);
                     texMaze = LoadTextureFromImage(imMaze);
                 }
-                else if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON))
+                else if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
                 {
                     if (ColorIsEqual(GetImageColor(imMaze, selectedCell.x, selectedCell.y), RED)) mazeItemCount--;
                     

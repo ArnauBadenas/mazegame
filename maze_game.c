@@ -15,7 +15,6 @@
 
 #include <stdlib.h>     // Required for: malloc(), free()
 #include <math.h>
-#include <stdio.h>
 
 #define MAZE_WIDTH          64
 #define MAZE_HEIGHT         64
@@ -344,7 +343,7 @@ int main(void)
             {
                 // Draw maze using camera2d (for automatic positioning and scale)
                 BeginMode2D(camera2d);
-           
+                    
                     // Draw maze walls and floor using current texture biome 
                     for (int y = 0; y < imMaze.height; y++)
                     {
@@ -449,7 +448,7 @@ static Image GenImageMaze(int width, int height, int spacingRows, int spacingCol
     // [1p] Implement maze image generation algorithm
     imMaze = GenImageColor(width, height, BLACK);
     
-    Point* mazePoints = malloc(64*sizeof(Point));
+    Point* mazePoints = malloc(width*height*sizeof(Point));
     int mazePointCounter = 0;
     
     for (int y = 0; y < imMaze.width; y++)

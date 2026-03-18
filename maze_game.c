@@ -459,7 +459,7 @@ static Image GenImageMaze(int width, int height, int spacingRows, int spacingCol
             {
                 ImageDrawPixel(&imMaze, x, y, WHITE);
             }
-            else if ((x % 4 == 0) && (y % 4 == 0))
+            else if ((x % spacingCols == 0) && (y % spacingRows == 0))
             {
                 if (GetRandomValue(0, 1) < pointChance)
                 {
